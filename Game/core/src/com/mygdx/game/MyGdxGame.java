@@ -27,26 +27,36 @@ public class MyGdxGame implements ApplicationListener {
 	OrthographicCamera camera;
 	Rectangle bucket;
 	Array<Rectangle> raindrops;
+	Array<Entity> entityArray = new Array<>();
 	long lastDropTime;
 	Rectangle rct;
 
-	class Player{
-		String playerImage;
-		Integer[] position = new Integer[2];
-		int speed;
 
-		public Player(String img, Integer[] pos, int spd){
-			playerImage = img;
-			position = pos;
-			speed = spd;
+	class Entity extends Rectangle{
+		Texture playerImage;
+		float x,y,with,height;
+		int speed;
+		public Entity(String playerImage, float x, float y, float width, float height, int speed) {
+			super(x, y, width, height);
+			this.playerImage = new Texture(Gdx.files.internal(playerImage));
+			this.speed = speed;
+			entityArray.add(this);
 		}
 	}
+
+	class Player extends Entity{
+		public Player(String playerImage, float x, float y, float width, float height, int speed) {
+			super(playerImage, x, y, width, height, speed);
+		}
+	}
+
+	Player player = new Player("seregapirat.jpg", 0, 0, 100, 100, 250);
 
 	@Override
 	public void create() {
 		// загрузка изображений для капли и ведра, 64x64 пикселей каждый
 		dropImage = new Texture(Gdx.files.internal("droplet.png"));
-		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+		bucketImage = player.playerImage;
 
 				// загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
 				//dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
@@ -64,9 +74,9 @@ public class MyGdxGame implements ApplicationListener {
 		// создается Rectangle для представления ведра
 		bucket = new Rectangle();
 		// центрируем ведро по горизонтали
-		bucket.x = 368;
+		bucket.x = player.x;
 		// размещаем на 20 пикселей выше нижней границы экрана.
-		bucket.y = 20;
+		bucket.y = player.y;
 
 		bucket.width = 100;
 		bucket.height = 100;
@@ -78,8 +88,8 @@ public class MyGdxGame implements ApplicationListener {
 
 	private void spawnRaindrop() {
 		Rectangle raindrop = new Rectangle();
-		raindrop.x = MathUtils.random(0, 800-64);
-		raindrop.y = 480;
+		raindrop.x = MathUtils.random(0, 800-64)- player.x;
+		raindrop.y = 480- player.y;
 		raindrop.width = 64;
 		raindrop.height = 64;
 		raindrops.add(raindrop);
@@ -110,25 +120,43 @@ public class MyGdxGame implements ApplicationListener {
 
 
 
-		batch.draw(bucketImage, bucket.x, bucket.y);
+		batch.draw(bucketImage, 0, 0);
 		for(Rectangle raindrop: raindrops) {
 			batch.draw(dropImage, raindrop.x, raindrop.y);
+		}
+		for(Rectangle ent: entityArray){
+			batch.draw(player.playerImage, player.x, player.y);
 		}
 		batch.end();
 
 		// обработка пользовательского ввода
 
-		if(Gdx.input.isKeyPressed(Keys.A)) bucket.x -= 250 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.D)) bucket.x += 250 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.S)) bucket.y -= 250 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Keys.W)) bucket.y += 250 * Gdx.graphics.getDeltaTime();
+		if(Gdx.input.isKeyPressed(Keys.A)){
+			player.x -= player.speed * Gdx.graphics.getDeltaTime();
+
+		}
+
+		if(Gdx.input.isKeyPressed(Keys.D)) {
+			player.x += player.speed * Gdx.graphics.getDeltaTime();
+
+		}
+
+		if(Gdx.input.isKeyPressed(Keys.S)) {
+			player.y -= player.speed * Gdx.graphics.getDeltaTime();
+
+		}
+
+		if(Gdx.input.isKeyPressed(Keys.W)) {
+			player.y += player.speed * Gdx.graphics.getDeltaTime();
+
+		}
 
 		// убедитесь что ведро остается в пределах экрана
 		if(bucket.x < 0) bucket.x = 0;
 		if(bucket.x > 800 - 64) bucket.x = 800 - 64;
 
 		// проверка, нужно ли создавать новую каплю
-		if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+		//if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
 
 		// движение капли, удаляем все капли выходящие за границы экрана
 		// или те, что попали в ведро. Воспроизведение звукового эффекта
