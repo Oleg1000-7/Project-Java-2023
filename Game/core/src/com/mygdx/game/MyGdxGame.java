@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -33,30 +34,35 @@ public class MyGdxGame implements ApplicationListener {
 
 
 	class Entity extends Rectangle{
-		Texture playerImage;
+		Texture image;
 		float x,y,with,height;
 		int speed;
-		public Entity(String playerImage, float x, float y, float width, float height, int speed) {
-			super(x, y, width, height);
-			this.playerImage = new Texture(Gdx.files.internal(playerImage));
+
+		public Entity(String image, float x, float y, float with, float height, int speed) {
+			this.image = new Texture(Gdx.files.internal(image));
+			this.x = x;
+			this.y = y;
+			this.with = with;
+			this.height = height;
 			this.speed = speed;
 			entityArray.add(this);
 		}
 	}
 
 	class Player extends Entity{
-		public Player(String playerImage, float x, float y, float width, float height, int speed) {
-			super(playerImage, x, y, width, height, speed);
+		public Player(String image, float x, float y, float with, float height, int speed) {
+			super(image, x, y, with, height, speed);
 		}
 	}
 
-	Player player = new Player("seregapirat.jpg", 0, 0, 100, 100, 250);
+	Player player;
+	Entity ent1;
 
 	@Override
 	public void create() {
+
 		// загрузка изображений для капли и ведра, 64x64 пикселей каждый
-		dropImage = new Texture(Gdx.files.internal("droplet.png"));
-		bucketImage = player.playerImage;
+
 
 				// загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
 				//dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
@@ -67,9 +73,16 @@ public class MyGdxGame implements ApplicationListener {
 				//rainMusic.play();
 
 		// создается камера и SpriteBatch
+		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 1200, 675);
 		batch = new SpriteBatch();
+
+
+		player = new Player("seregapirat.jpg", 550, 287, 100, 100, 250);
+		ent1 = new Entity("bucket.png", 100, 100, 100, 100, 100);
+		dropImage = new Texture(Gdx.files.internal("droplet.png"));
+		bucketImage = player.image;
 
 		// создается Rectangle для представления ведра
 		bucket = new Rectangle();
@@ -98,6 +111,7 @@ public class MyGdxGame implements ApplicationListener {
 
 	@Override
 	public void render() {
+		if (Gdx.input.isKeyPressed(Keys.ESCAPE)) Gdx.app.exit();
 		// очищаем экран темно-синим цветом.
 		// Аргументы для glClearColor красный, зеленый
 		// синий и альфа компонент в диапазоне [0,1]
@@ -118,37 +132,35 @@ public class MyGdxGame implements ApplicationListener {
 		batch.begin();
 
 
-
-
-		batch.draw(bucketImage, 0, 0);
 		for(Rectangle raindrop: raindrops) {
 			batch.draw(dropImage, raindrop.x, raindrop.y);
 		}
-		for(Rectangle ent: entityArray){
-			batch.draw(player.playerImage, player.x, player.y);
+		for(Entity entity: entityArray){
+			batch.draw(entity.image, entity.x, entity.y);
 		}
 		batch.end();
 
 		// обработка пользовательского ввода
 
-		if(Gdx.input.isKeyPressed(Keys.A)){
-			player.x -= player.speed * Gdx.graphics.getDeltaTime();
 
-		}
+		for(Entity entity:entityArray){
+			if(entity != entityArray.get(0)) {
+				if (Gdx.input.isKeyPressed(Keys.A)) {
+					entity.x += player.speed * Gdx.graphics.getDeltaTime();
+				}
 
-		if(Gdx.input.isKeyPressed(Keys.D)) {
-			player.x += player.speed * Gdx.graphics.getDeltaTime();
+				if (Gdx.input.isKeyPressed(Keys.D)) {
+					entity.x -= player.speed * Gdx.graphics.getDeltaTime();
+				}
 
-		}
+				if (Gdx.input.isKeyPressed(Keys.S)) {
+					entity.y += player.speed * Gdx.graphics.getDeltaTime();
+				}
 
-		if(Gdx.input.isKeyPressed(Keys.S)) {
-			player.y -= player.speed * Gdx.graphics.getDeltaTime();
-
-		}
-
-		if(Gdx.input.isKeyPressed(Keys.W)) {
-			player.y += player.speed * Gdx.graphics.getDeltaTime();
-
+				if (Gdx.input.isKeyPressed(Keys.W)) {
+					entity.y -= player.speed * Gdx.graphics.getDeltaTime();
+				}
+			}
 		}
 
 		// убедитесь что ведро остается в пределах экрана
