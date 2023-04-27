@@ -11,6 +11,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,8 +21,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import jdk.jfr.consumer.RecordedThread;
 
 public class MyGdxGame implements ApplicationListener {
-	Texture dropImage;
-	Texture bucketImage;
+	Texture dropImage, bucketImage, LightImage;
+
 	//Sound dropSound;
 	//Music rainMusic;
 	SpriteBatch batch;
@@ -31,6 +32,7 @@ public class MyGdxGame implements ApplicationListener {
 	Array<Entity> entityArray = new Array<>();
 	long lastDropTime;
 	Rectangle rct;
+	boolean is_menu;
 
 
 	class Entity extends Rectangle{
@@ -38,20 +40,24 @@ public class MyGdxGame implements ApplicationListener {
 		float x,y,with,height;
 		int speed;
 
-		public Entity(String image, float x, float y, float with, float height, int speed) {
+		public Entity(String image, float x, float y, int speed) {
 			this.image = new Texture(Gdx.files.internal(image));
-			this.x = x;
-			this.y = y;
-			this.with = with;
-			this.height = height;
+			this.x = x - this.image.getWidth()/2;
+			this.y = y - this.image.getHeight()/2;
+			this.with = this.image.getWidth();
+			this.height = this.image.getHeight();
 			this.speed = speed;
 			entityArray.add(this);
+		}
+
+		void draw(Batch batch){
+			batch.draw(this.image, this.x, this.y);
 		}
 	}
 
 	class Player extends Entity{
-		public Player(String image, float x, float y, float with, float height, int speed) {
-			super(image, x, y, with, height, speed);
+		public Player(String image, float x, float y, int speed) {
+			super(image, x, y, speed);
 		}
 	}
 
@@ -73,14 +79,15 @@ public class MyGdxGame implements ApplicationListener {
 				//rainMusic.play();
 
 		// создается камера и SpriteBatch
+		is_menu = true;
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 1200, 675);
+		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
+		player = new Player("seregapirat.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250);
 
-		player = new Player("seregapirat.jpg", 550, 287, 100, 100, 250);
-		ent1 = new Entity("bucket.png", 100, 100, 100, 100, 100);
+		LightImage = new Texture(Gdx.files.internal("ground/foreground1.png"));
 		dropImage = new Texture(Gdx.files.internal("droplet.png"));
 		bucketImage = player.image;
 
@@ -111,76 +118,89 @@ public class MyGdxGame implements ApplicationListener {
 
 	@Override
 	public void render() {
-		if (Gdx.input.isKeyPressed(Keys.ESCAPE)) Gdx.app.exit();
-		// очищаем экран темно-синим цветом.
-		// Аргументы для glClearColor красный, зеленый
-		// синий и альфа компонент в диапазоне [0,1]
-		// цвета используемого для очистки экрана.
-
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
-		// сообщает камере, что нужно обновить матрицы
-		camera.update();
-
-		// сообщаем SpriteBatch о системе координат
-		// визуализации указанной для камеры.
-		batch.setProjectionMatrix(camera.combined);
-
-		// начинаем новую серию, рисуем ведро и
-		// все капли
-		batch.begin();
-
-
-		for(Rectangle raindrop: raindrops) {
-			batch.draw(dropImage, raindrop.x, raindrop.y);
+		if (is_menu) {
+			if (Gdx.input.isKeyPressed(Keys.Q)) Gdx.app.exit();
+			if (Gdx.input.isKeyPressed(Keys.ENTER)) is_menu = false;
+			Gdx.gl.glClearColor(0, 0, 0, 0);
+			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+			camera.update();
 		}
-		for(Entity entity: entityArray){
-			batch.draw(entity.image, entity.x, entity.y);
-		}
-		batch.end();
+		else {
+			if (Gdx.input.isKeyPressed(Keys.ESCAPE)) is_menu = true;
+			// очищаем экран темно-синим цветом.
+			// Аргументы для glClearColor красный, зеленый
+			// синий и альфа компонент в диапазоне [0,1]
+			// цвета используемого для очистки экрана.
 
-		// обработка пользовательского ввода
+			Gdx.gl.glClearColor(0, 0, 0, 0);
+			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+			// сообщает камере, что нужно обновить матрицы
+			camera.update();
+
+			// сообщаем SpriteBatch о системе координат
+			// визуализации указанной для камеры.
+			batch.setProjectionMatrix(camera.combined);
+
+			// начинаем новую серию, рисуем ведро и
+			// все капли
+			batch.begin();
+
+			batch.draw(LightImage, player.x + player.with / 2 - LightImage.getWidth() / 2, player.y + player.height / 2 - LightImage.getHeight() / 2);
+
+			for (Rectangle raindrop : raindrops) {
+				batch.draw(dropImage, raindrop.x, raindrop.y);
+			}
+
+			for (Entity entity : entityArray) {
+				if (Gdx.input.isKeyPressed(Keys.SPACE) || entity == entityArray.get(0))
+					entity.draw(batch);
+			}
+
+			batch.end();
+
+			// обработка пользовательского ввода
 
 
-		for(Entity entity:entityArray){
-			if(entity != entityArray.get(0)) {
-				if (Gdx.input.isKeyPressed(Keys.A)) {
-					entity.x += player.speed * Gdx.graphics.getDeltaTime();
-				}
+			for (Entity entity : entityArray) {
+				if (entity != entityArray.get(0)) {
+					if (Gdx.input.isKeyPressed(Keys.A)) {
+						entity.x += player.speed * Gdx.graphics.getDeltaTime();
+					}
 
-				if (Gdx.input.isKeyPressed(Keys.D)) {
-					entity.x -= player.speed * Gdx.graphics.getDeltaTime();
-				}
+					if (Gdx.input.isKeyPressed(Keys.D)) {
+						entity.x -= player.speed * Gdx.graphics.getDeltaTime();
+					}
 
-				if (Gdx.input.isKeyPressed(Keys.S)) {
-					entity.y += player.speed * Gdx.graphics.getDeltaTime();
-				}
+					if (Gdx.input.isKeyPressed(Keys.S)) {
+						entity.y += player.speed * Gdx.graphics.getDeltaTime();
+					}
 
-				if (Gdx.input.isKeyPressed(Keys.W)) {
-					entity.y -= player.speed * Gdx.graphics.getDeltaTime();
+					if (Gdx.input.isKeyPressed(Keys.W)) {
+						entity.y -= player.speed * Gdx.graphics.getDeltaTime();
+					}
 				}
 			}
-		}
 
-		// убедитесь что ведро остается в пределах экрана
-		if(bucket.x < 0) bucket.x = 0;
-		if(bucket.x > 800 - 64) bucket.x = 800 - 64;
+			// убедитесь что ведро остается в пределах экрана
+			if (bucket.x < 0) bucket.x = 0;
+			if (bucket.x > 800 - 64) bucket.x = 800 - 64;
 
-		// проверка, нужно ли создавать новую каплю
-		//if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+			// проверка, нужно ли создавать новую каплю
+			//if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
 
-		// движение капли, удаляем все капли выходящие за границы экрана
-		// или те, что попали в ведро. Воспроизведение звукового эффекта
-		// при попадании.
-		Iterator<Rectangle> iter = raindrops.iterator();
-		while(iter.hasNext()) {
-			Rectangle raindrop = iter.next();
-			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-			if(raindrop.y + 64 < 0) iter.remove();
-			if(raindrop.overlaps(bucket)) {
-				//dropSound.play();
-				iter.remove();
+			// движение капли, удаляем все капли выходящие за границы экрана
+			// или те, что попали в ведро. Воспроизведение звукового эффекта
+			// при попадании.
+			Iterator<Rectangle> iter = raindrops.iterator();
+			while (iter.hasNext()) {
+				Rectangle raindrop = iter.next();
+				raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
+				if (raindrop.y + 64 < 0) iter.remove();
+				if (raindrop.overlaps(bucket)) {
+					//dropSound.play();
+					iter.remove();
+				}
 			}
 		}
 	}
