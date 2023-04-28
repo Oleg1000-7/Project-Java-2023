@@ -1,6 +1,11 @@
 package com.mygdx.game;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Scanner;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -17,11 +22,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.CharArray;
 import com.badlogic.gdx.utils.TimeUtils;
 import jdk.jfr.consumer.RecordedThread;
 
 public class MyGdxGame implements ApplicationListener {
 	Texture dropImage, bucketImage, LightImage;
+
+	Path path = Paths.get("C:/Users/User/Desktop/Project-Java-2023-main/Game/assets/walls.txt");
+	Scanner scanner;
+
+	{
+		try {
+			scanner = new Scanner(path);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	//Sound dropSound;
 	//Music rainMusic;
@@ -66,17 +83,16 @@ public class MyGdxGame implements ApplicationListener {
 
 	@Override
 	public void create() {
-
 		// загрузка изображений для капли и ведра, 64x64 пикселей каждый
 
 
-				// загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
-				//dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-				//rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+		// загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
+		//dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
+		//rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
-				// сразу же воспроизводиться музыка для фона
-				//rainMusic.setLooping(true);
-				//rainMusic.play();
+		// сразу же воспроизводиться музыка для фона
+		//rainMusic.setLooping(true);
+		//rainMusic.play();
 
 		// создается камера и SpriteBatch
 		is_menu = true;
@@ -86,6 +102,15 @@ public class MyGdxGame implements ApplicationListener {
 		batch = new SpriteBatch();
 
 		player = new Player("seregapirat.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250);
+
+		int y = 0;
+		while(scanner.hasNext()){
+			char[] walls = scanner.nextLine().toCharArray();
+			for (int x =  0; x < walls.length; ++x){
+				if(walls[x]=='0') new Entity("wall.jpg", x * 100, y * 100, 0);
+			}
+			y++;
+		}
 
 		LightImage = new Texture(Gdx.files.internal("ground/foreground1.png"));
 		dropImage = new Texture(Gdx.files.internal("droplet.png"));
@@ -124,8 +149,7 @@ public class MyGdxGame implements ApplicationListener {
 			Gdx.gl.glClearColor(0, 0, 0, 0);
 			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 			camera.update();
-		}
-		else {
+		} else {
 			if (Gdx.input.isKeyPressed(Keys.ESCAPE)) is_menu = true;
 			// очищаем экран темно-синим цветом.
 			// Аргументы для glClearColor красный, зеленый
@@ -153,8 +177,7 @@ public class MyGdxGame implements ApplicationListener {
 			}
 
 			for (Entity entity : entityArray) {
-				if (Gdx.input.isKeyPressed(Keys.SPACE) || entity == entityArray.get(0))
-					entity.draw(batch);
+				if((entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250) entity.draw(batch);
 			}
 
 			batch.end();
