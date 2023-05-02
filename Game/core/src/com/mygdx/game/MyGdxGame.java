@@ -29,7 +29,7 @@ import jdk.jfr.consumer.RecordedThread;
 public class MyGdxGame implements ApplicationListener {
 	Texture dropImage, bucketImage, LightImage;
 
-	Path path = Paths.get("C:/Users/User/Desktop/Project-Java-2023-main/Game/assets/walls.txt");
+	Path path = Paths.get("C:/Users/CUBER/AndroidStudioProjects/Project-Java-2023/Game/assets/walls.txt");
 	Scanner scanner;
 
 	{
@@ -53,28 +53,30 @@ public class MyGdxGame implements ApplicationListener {
 
 
 	class Entity extends Rectangle{
-		Texture image;
+		Texture image, oimage;
 		float x,y,with,height;
 		int speed;
 
-		public Entity(String image, float x, float y, int speed) {
+		public Entity(String image, String oimage, int x, int y, int speed) {
 			this.image = new Texture(Gdx.files.internal(image));
-			this.x = x - this.image.getWidth()/2;
-			this.y = y - this.image.getHeight()/2;
-			this.with = this.image.getWidth();
+			this.oimage = new Texture(Gdx.files.internal(oimage));;
+			this.x = x;
+			this.y = y;
+			this.width = this.image.getWidth();
 			this.height = this.image.getHeight();
 			this.speed = speed;
 			entityArray.add(this);
 		}
 
-		void draw(Batch batch){
-			batch.draw(this.image, this.x, this.y);
+		void draw(Batch batch, boolean is_drawn){
+			if(is_drawn || oimage == image) batch.draw(this.image, this.x - this.image.getWidth()/2, this.y - this.image.getHeight()/2);
+			else batch.draw(this.oimage, this.x, this.y);
 		}
 	}
 
 	class Player extends Entity{
-		public Player(String image, float x, float y, int speed) {
-			super(image, x, y, speed);
+		public Player(String image, String oimage, int x, int y, int speed) {
+			super(image, oimage, x, y, speed);
 		}
 	}
 
@@ -83,31 +85,31 @@ public class MyGdxGame implements ApplicationListener {
 
 	@Override
 	public void create() {
-		// загрузка изображений для капли и ведра, 64x64 пикселей каждый
-
-
-		// загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
-		//dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-		//rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-
-		// сразу же воспроизводиться музыка для фона
-		//rainMusic.setLooping(true);
-		//rainMusic.play();
-
-		// создается камера и SpriteBatch
+//		 загрузка изображений для капли и ведра, 64x64 пикселей каждый
+//
+//
+//		 загрузка звукового эффекта падающей капли и фоновой "музыки" дождя
+//		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
+//		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+//
+//		 сразу же воспроизводиться музыка для фона
+//		rainMusic.setLooping(true);
+//		rainMusic.play();
+//
+//		 создается камера и SpriteBatch
 		is_menu = true;
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("seregapirat.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250);
+		player = new Player("seregapirat.jpg", "seregapirat.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250);
 
 		int y = 0;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
-				if(walls[x]=='0') new Entity("wall.jpg", x * 100, y * 100, 0);
+				if(walls[x]=='0') new Entity("wall.jpg", "point.png", x * 100, y * 100, 0);
 			}
 			y++;
 		}
@@ -177,7 +179,7 @@ public class MyGdxGame implements ApplicationListener {
 			}
 
 			for (Entity entity : entityArray) {
-				if((entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250) entity.draw(batch);
+				entity.draw(batch, (entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250);
 			}
 
 			batch.end();
