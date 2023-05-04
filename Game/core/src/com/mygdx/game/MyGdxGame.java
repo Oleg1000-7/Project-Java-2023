@@ -3,6 +3,8 @@ package com.mygdx.game;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -27,10 +29,12 @@ public class MyGdxGame implements ApplicationListener {
 		}
 	}
 	SpriteBatch batch;
+	Random random = new Random();
 	OrthographicCamera camera;
 	Array<Entity> entityArray = new Array<>();
 	boolean is_menu;
 	Player player;
+	ArrayList<Enemy> enemies = new ArrayList<>();
 
 	@Override
 	public void create() {
@@ -45,8 +49,8 @@ public class MyGdxGame implements ApplicationListener {
 		int y = 0;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
-			for (int x = 2; x < walls.length; ++x){
-				if(walls[x]=='0') new Entity("wall.jpg", "point.png", x * 100, y * 100, 0, entityArray);
+			for (int x =  0; x < walls.length; ++x){
+				if(walls[x]=='0') new Entity("wall.jpg", "point.jpg", x * 100, y * 100, 0, entityArray);
 			}
 			y++;
 		}
@@ -68,7 +72,6 @@ public class MyGdxGame implements ApplicationListener {
 			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 			camera.update();
 			batch.setProjectionMatrix(camera.combined);
-
 			batch.begin();
 
 			batch.draw(
@@ -103,6 +106,11 @@ public class MyGdxGame implements ApplicationListener {
 						entity.y -= player.speed * Gdx.graphics.getDeltaTime();
 					}
 				}
+			}
+			int x = random.nextInt(Gdx.graphics.getDisplayMode().width + 400) - 200;
+			int y = random.nextInt(Gdx.graphics.getDisplayMode().height + 400) - 200;
+			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
+				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
 		}
 	}
