@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Array;
 public class MyGdxGame implements ApplicationListener {
 	Texture LightImage;
 
-	Path path = Paths.get("C:/Users/CUBER/AndroidStudioProjects/Project-Java-2023/Game/assets/walls.txt");
+	Path path = Paths.get("assets/walls.txt");
 	Scanner scanner;
 	{
 		try {
@@ -45,7 +45,7 @@ public class MyGdxGame implements ApplicationListener {
 		int y = 0;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
-			for (int x =  0; x < walls.length; ++x){
+			for (int x = 2; x < walls.length; ++x){
 				if(walls[x]=='0') new Entity("wall.jpg", "point.png", x * 100, y * 100, 0, entityArray);
 			}
 			y++;
@@ -68,12 +68,19 @@ public class MyGdxGame implements ApplicationListener {
 			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 			camera.update();
 			batch.setProjectionMatrix(camera.combined);
+
 			batch.begin();
 
-			batch.draw(LightImage, player.x + (player.width - LightImage.getWidth()) / 2, player.y + (player.height - LightImage.getHeight()) / 2);
+			batch.draw(
+					LightImage,
+					(float) (player.x + (player.width - LightImage.getWidth()) / 2),
+					(float) (player.y + (player.height - LightImage.getHeight()) / 2)
+			);
 
 			for (Entity entity : entityArray) {
 				entity.draw(batch, (entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250);
+				entity.update();
+				if (player.intersects(entity) && entity != entityArray.get(0)) System.out.println("a");
 			}
 
 			batch.end();
