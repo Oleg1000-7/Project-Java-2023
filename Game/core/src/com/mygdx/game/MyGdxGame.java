@@ -104,9 +104,9 @@ public class MyGdxGame implements ApplicationListener {
 					}
 				}
 			}
-			int x = random.nextInt(-100, Gdx.graphics.getDisplayMode().width + 100);
-			int y = random.nextInt(-100, Gdx.graphics.getDisplayMode().height + 100);
-			if (x <= -100 || y < -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
+			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
+			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
+			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
 				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
 		}
