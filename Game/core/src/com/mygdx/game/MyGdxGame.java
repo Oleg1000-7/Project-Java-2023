@@ -3,6 +3,8 @@ package com.mygdx.game;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -17,8 +19,10 @@ import com.badlogic.gdx.utils.Array;
 public class MyGdxGame implements ApplicationListener {
 	Texture LightImage;
 
-	Path path = Paths.get("C:/Users/CUBER/AndroidStudioProjects/Project-Java-2023/Game/assets/walls.txt");
+	Path path = Paths.get("assets/walls.txt");
+
 	Scanner scanner;
+
 	{
 		try {
 			scanner = new Scanner(path);
@@ -26,11 +30,14 @@ public class MyGdxGame implements ApplicationListener {
 			throw new RuntimeException(e);
 		}
 	}
+
 	SpriteBatch batch;
+	Random random = new Random();
 	OrthographicCamera camera;
 	Array<Entity> entityArray = new Array<>();
 	boolean is_menu;
 	Player player;
+	ArrayList<Enemy> enemies = new ArrayList<>();
 
 	@Override
 	public void create() {
@@ -46,7 +53,7 @@ public class MyGdxGame implements ApplicationListener {
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
-				if(walls[x]=='0') new Entity("wall.jpg", "point.png", x * 100, y * 100, 0, entityArray);
+				if(walls[x]=='0') new Entity("wall.jpg", "point.jpg", x * 100, y * 100, 0, entityArray);
 			}
 			y++;
 		}
@@ -96,6 +103,11 @@ public class MyGdxGame implements ApplicationListener {
 						entity.y -= player.speed * Gdx.graphics.getDeltaTime();
 					}
 				}
+			}
+			int x = random.nextInt(-100, Gdx.graphics.getDisplayMode().width + 100);
+			int y = random.nextInt(-100, Gdx.graphics.getDisplayMode().height + 100);
+			if (x <= -100 || y < -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
+				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
 		}
 	}
