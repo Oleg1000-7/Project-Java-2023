@@ -20,7 +20,9 @@ public class MyGdxGame implements ApplicationListener {
 	Texture LightImage;
 
 	Path path = Paths.get("assets/walls.txt");
+
 	Scanner scanner;
+
 	{
 		try {
 			scanner = new Scanner(path);
@@ -28,6 +30,7 @@ public class MyGdxGame implements ApplicationListener {
 			throw new RuntimeException(e);
 		}
 	}
+
 	SpriteBatch batch;
 	Random random = new Random();
 	OrthographicCamera camera;
@@ -107,8 +110,8 @@ public class MyGdxGame implements ApplicationListener {
 					}
 				}
 			}
-			int x = random.nextInt(Gdx.graphics.getDisplayMode().width + 400) - 200;
-			int y = random.nextInt(Gdx.graphics.getDisplayMode().height + 400) - 200;
+			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
+			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
 			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
 				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
