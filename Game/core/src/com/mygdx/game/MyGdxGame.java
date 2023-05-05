@@ -32,18 +32,28 @@ public class MyGdxGame implements ApplicationListener {
 	}
 
 	SpriteBatch batch;
-	Random random = new Random();
+	Random random;
 	OrthographicCamera camera;
-	Array<Entity> entityArray = new Array<>();
+	Array<Entity> entityArray;
+	ArrayList<Enemy> enemies;
+	boolean [] move;
 	boolean is_menu;
 	Player player;
-	ArrayList<Enemy> enemies = new ArrayList<>();
+	float currentPlayerSpeed;
+	int intersections;
 
 	@Override
 	public void create() {
+		random = new Random();
+		entityArray = new Array<>();
+		enemies = new ArrayList<>();
+		move = new boolean[]{true, true, true, true};
 		is_menu = true;
+
+
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 		camera = new OrthographicCamera();
+
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
@@ -53,7 +63,7 @@ public class MyGdxGame implements ApplicationListener {
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
-				if(walls[x]=='0') new Entity("wall.jpg", "point.jpg", x * 100, y * 100, 0, entityArray);
+				if(walls[x]=='0') new Entity("wall.jpg", "point.jpg", x * 100, -y * 100, 0, entityArray);
 			}
 			y++;
 		}
@@ -83,30 +93,44 @@ public class MyGdxGame implements ApplicationListener {
 					(float) (player.y + (player.height - LightImage.getHeight()) / 2)
 			);
 
+			currentPlayerSpeed = player.speed * Gdx.graphics.getDeltaTime();
+			intersections = 0;
+
 			for (Entity entity : entityArray) {
 				entity.draw(batch, (entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250);
 				entity.update();
-				if (player.intersects(entity) && entity != entityArray.get(0)) System.out.println("a");
+				if (player.intersects(entity) && entity != entityArray.get(0)){
+					if (Math.abs(entity.getCenterX() - player.getCenterX() - currentPlayerSpeed) <= (entity.width + player.width)/2){
+						if (entity.getCenterX() >= player.getCenterX()){ move[0] = true; move[1] = false; }
+						else{ move[0] = false; move[1] = true; }
+					}
+					if (Math.abs(entity.getCenterY() - player.getCenterY() - currentPlayerSpeed) <= (entity.height + player.height)/2){
+						if (entity.getCenterY() >= player.getCenterY()){ move[2] = false; move[3] = true; }
+						else{ move[2] = true; move[3] = false; }
+					}
+					intersections++;
+				}
 			}
+			if (intersections == 0) move = new boolean[]{true, true, true, true};
 
 			batch.end();
 
 			for (Entity entity : entityArray) {
 				if (entity != entityArray.get(0)) {
-					if (Gdx.input.isKeyPressed(Keys.A)) {
-						entity.x += player.speed * Gdx.graphics.getDeltaTime();
+					if (Gdx.input.isKeyPressed(Keys.A) && move[0]) {
+						entity.x += currentPlayerSpeed;
 					}
 
-					if (Gdx.input.isKeyPressed(Keys.D)) {
-						entity.x -= player.speed * Gdx.graphics.getDeltaTime();
+					if (Gdx.input.isKeyPressed(Keys.D) && move[1]) {
+						entity.x -= currentPlayerSpeed;
 					}
 
-					if (Gdx.input.isKeyPressed(Keys.S)) {
-						entity.y += player.speed * Gdx.graphics.getDeltaTime();
+					if (Gdx.input.isKeyPressed(Keys.W) && move[2]) {
+						entity.y -= currentPlayerSpeed;
 					}
 
-					if (Gdx.input.isKeyPressed(Keys.W)) {
-						entity.y -= player.speed * Gdx.graphics.getDeltaTime();
+					if (Gdx.input.isKeyPressed(Keys.S) && move[3]) {
+						entity.y += currentPlayerSpeed;
 					}
 				}
 			}
