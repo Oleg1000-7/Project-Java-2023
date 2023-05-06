@@ -102,22 +102,7 @@ public class MyGdxGame implements ApplicationListener {
 					int pos = player.movement(entity);
 					if (pos != -1) move[pos] = false;
 				}
-				//if (player.intersects(entity) && entity != entityArray.get(0)){
-
-					//double dx = Math.abs(entity.getCenterX() - player.getCenterX() - currentPlayerSpeed);
-					//double dy = Math.abs(entity.getCenterY() - player.getCenterY() - currentPlayerSpeed);
-					//if (dx <= (entity.width + player.width)/2){
-					//	if (entity.getCenterX() >= player.getCenterX()){ move[0] = true; move[1] = false; }
-					//	else{ move[0] = false; move[1] = true; }
-					//}
-
-					//if (dy <= (entity.height + player.height)/2){
-					//	if (entity.getCenterY() >= player.getCenterY()){ move[2] = false; move[3] = true; }
-					//	else{ move[2] = true; move[3] = false; }
-					//}
 			}
-			//for (boolean b : move) System.out.print(b);
-			//System.out.println();
 
 			batch.end();
 
