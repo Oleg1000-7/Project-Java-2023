@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 public class Entity extends Rectangle {
     Texture image, oimage;
     float x,y;
-    double width,height;
+    double width,height,centerX,centerY;
     int speed;
 
     public Entity(String image, String oimage, int x, int y, int speed, Array<Entity> entityArray) {
@@ -23,6 +23,8 @@ public class Entity extends Rectangle {
         this.speed = speed;
         entityArray.add(this);
         this.setRect(this.x, this.y, this.width, this.height);
+        this.centerX = this.getCenterX();
+        this.centerY = this.getCenterY();
     }
 
     void draw(Batch batch, boolean is_drawn){
@@ -32,5 +34,7 @@ public class Entity extends Rectangle {
     }
     void update(){
         this.setRect(this.x, this.y, this.width, this.height);
+        this.centerX = this.getCenterX();
+        this.centerY = this.getCenterY();
     }
 }

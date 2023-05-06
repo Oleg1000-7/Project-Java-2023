@@ -40,8 +40,6 @@ public class MyGdxGame implements ApplicationListener {
 	boolean is_menu;
 	Player player;
 	float currentPlayerSpeed;
-	int intersections;
-
 	@Override
 	public void create() {
 		random = new Random();
@@ -57,7 +55,7 @@ public class MyGdxGame implements ApplicationListener {
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("seregapirat.jpg", "seregapirat.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray);
+		player = new Player("wall.jpg", "wall.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray);
 
 		int y = 0;
 		while(scanner.hasNext()){
@@ -94,24 +92,32 @@ public class MyGdxGame implements ApplicationListener {
 			);
 
 			currentPlayerSpeed = player.speed * Gdx.graphics.getDeltaTime();
-			intersections = 0;
+
+			move = new boolean[]{true, true, true, true};
 
 			for (Entity entity : entityArray) {
 				entity.draw(batch, (entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250);
 				entity.update();
-				if (player.intersects(entity) && entity != entityArray.get(0)){
-					if (Math.abs(entity.getCenterX() - player.getCenterX() - currentPlayerSpeed) <= (entity.width + player.width)/2){
-						if (entity.getCenterX() >= player.getCenterX()){ move[0] = true; move[1] = false; }
-						else{ move[0] = false; move[1] = true; }
-					}
-					if (Math.abs(entity.getCenterY() - player.getCenterY() - currentPlayerSpeed) <= (entity.height + player.height)/2){
-						if (entity.getCenterY() >= player.getCenterY()){ move[2] = false; move[3] = true; }
-						else{ move[2] = true; move[3] = false; }
-					}
-					intersections++;
+				if(entity != entityArray.get(0)){
+					int pos = player.movement(entity);
+					if (pos != -1) move[pos] = false;
 				}
+				//if (player.intersects(entity) && entity != entityArray.get(0)){
+
+					//double dx = Math.abs(entity.getCenterX() - player.getCenterX() - currentPlayerSpeed);
+					//double dy = Math.abs(entity.getCenterY() - player.getCenterY() - currentPlayerSpeed);
+					//if (dx <= (entity.width + player.width)/2){
+					//	if (entity.getCenterX() >= player.getCenterX()){ move[0] = true; move[1] = false; }
+					//	else{ move[0] = false; move[1] = true; }
+					//}
+
+					//if (dy <= (entity.height + player.height)/2){
+					//	if (entity.getCenterY() >= player.getCenterY()){ move[2] = false; move[3] = true; }
+					//	else{ move[2] = true; move[3] = false; }
+					//}
 			}
-			if (intersections == 0) move = new boolean[]{true, true, true, true};
+			//for (boolean b : move) System.out.print(b);
+			//System.out.println();
 
 			batch.end();
 
@@ -134,9 +140,10 @@ public class MyGdxGame implements ApplicationListener {
 					}
 				}
 			}
+
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
-			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height){
+			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height && entityArray.size < 5){
 				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
 		}
