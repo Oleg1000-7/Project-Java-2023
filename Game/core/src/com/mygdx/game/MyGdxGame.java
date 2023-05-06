@@ -96,7 +96,7 @@ public class MyGdxGame implements ApplicationListener {
 			move = new boolean[]{true, true, true, true};
 
 			for (Entity entity : entityArray) {
-				entity.draw(batch, (entity.x - player.x) * (entity.x - player.x) + (entity.y - player.y) * (entity.y - player.y) < 250 * 250);
+				entity.draw(batch, Math.pow(entity.x - player.x, 2) + Math.pow(entity.y - player.y, 2) < 280 * 280);
 				entity.update();
 				if(entity != entityArray.get(0)){
 					int pos = player.movement(entity);
@@ -128,7 +128,7 @@ public class MyGdxGame implements ApplicationListener {
 
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
-			if (x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height && entityArray.size < 5){
+			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && entityArray.size < 5){
 				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
 			}
 		}
