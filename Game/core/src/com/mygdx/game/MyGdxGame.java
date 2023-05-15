@@ -38,7 +38,7 @@ public class MyGdxGame implements ApplicationListener {
 	ArrayList<Enemy> enemies;
 	boolean [] move;
 	boolean is_menu;
-	Player player;
+	public Player player;
 	float currentPlayerSpeed;
 	@Override
 	public void create() {
@@ -55,7 +55,7 @@ public class MyGdxGame implements ApplicationListener {
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("wall.jpg", "wall.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray);
+		player = new Player("wall.jpg", "wall.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 500, entityArray);
 
 		int y = 0;
 		while(scanner.hasNext()){
@@ -129,7 +129,7 @@ public class MyGdxGame implements ApplicationListener {
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
 			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && entityArray.size < 5){
-				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 0, entityArray));
+				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 5, entityArray));
 			}
 		}
 	}
