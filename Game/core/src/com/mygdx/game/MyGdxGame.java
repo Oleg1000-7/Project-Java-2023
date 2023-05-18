@@ -35,10 +35,10 @@ public class MyGdxGame implements ApplicationListener {
 	Random random;
 	OrthographicCamera camera;
 	Array<Entity> entityArray;
-	ArrayList<Enemy> enemies;
+	static ArrayList<Enemy> enemies;
 	boolean [] move;
 	boolean is_menu;
-	public Player player;
+	static public Player player;
 	float currentPlayerSpeed;
 	@Override
 	public void create() {
@@ -106,23 +106,16 @@ public class MyGdxGame implements ApplicationListener {
 
 			batch.end();
 
+			boolean [] keyList = new boolean[]{
+					Gdx.input.isKeyPressed(Keys.A),
+					Gdx.input.isKeyPressed(Keys.D),
+					Gdx.input.isKeyPressed(Keys.W),
+					Gdx.input.isKeyPressed(Keys.S)
+			};
+
 			for (Entity entity : entityArray) {
 				if (entity != entityArray.get(0)) {
-					if (Gdx.input.isKeyPressed(Keys.A) && move[0]) {
-						entity.x += currentPlayerSpeed;
-					}
-
-					if (Gdx.input.isKeyPressed(Keys.D) && move[1]) {
-						entity.x -= currentPlayerSpeed;
-					}
-
-					if (Gdx.input.isKeyPressed(Keys.W) && move[2]) {
-						entity.y -= currentPlayerSpeed;
-					}
-
-					if (Gdx.input.isKeyPressed(Keys.S) && move[3]) {
-						entity.y += currentPlayerSpeed;
-					}
+					entity.wasd(keyList, move, currentPlayerSpeed);
 				}
 			}
 

@@ -12,7 +12,6 @@ public class Entity extends Rectangle {
     float x,y;
     double width,height,owidth,oheight,centerX,centerY;
     int speed;
-
     public Entity(String image, String oimage, int x, int y, int speed, Array<Entity> entityArray) {
         this.image = new Texture(Gdx.files.internal(image));
         this.oimage = new Texture(Gdx.files.internal(oimage));
@@ -40,5 +39,11 @@ public class Entity extends Rectangle {
         this.setRect(this.x, this.y, this.width, this.height);
         this.centerX = this.getCenterX();
         this.centerY = this.getCenterY();
+    }
+    void wasd(boolean [] keys, boolean [] move, float speed){
+        if (keys[0] && move[0]) this.x += speed;
+        if (keys[1] && move[1]) this.x -= speed;
+        if (keys[2] && move[2]) this.y -= speed;
+        if (keys[3] && move[3]) this.y += speed;
     }
 }
