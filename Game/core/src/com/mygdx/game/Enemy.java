@@ -28,11 +28,17 @@ class Enemy extends Entity{
             }
         }
         if(!this.intersects(MyGdxGame.player)) {
-            if (this.x < screenCenterX && directions[0]) this.x += this.speed;
-            else if (this.x > screenCenterX && directions[1]) this.x -= this.speed;
+            double cos = Math.abs(this.centerX-screenCenterX);
+            double sin = Math.abs(this.centerY-screenCenterY);
+            double gip =  Math.hypot(cos, sin);
+            cos /= gip;
+            sin /= gip;
 
-            if (this.y < screenCenterY && directions[2]) this.y += this.speed;
-            else if (this.y > screenCenterY && directions[3]) this.y -= this.speed;
+            if (this.x < screenCenterX && directions[0]) this.x += this.speed*cos;
+            else if (this.x > screenCenterX && directions[1]) this.x -= this.speed*cos;
+
+            if (this.y < screenCenterY && directions[2]) this.y += this.speed*sin;
+            else if (this.y > screenCenterY && directions[3]) this.y -= this.speed*sin;
         }
         super.update();
     }

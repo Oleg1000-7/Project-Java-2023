@@ -71,6 +71,7 @@ public class MyGdxGame implements ApplicationListener {
 
 	@Override
 	public void render() {
+
 		if (is_menu) {
 			if (Gdx.input.isKeyPressed(Keys.Q)) Gdx.app.exit();
 			if (Gdx.input.isKeyPressed(Keys.ENTER)) is_menu = false;
@@ -112,12 +113,15 @@ public class MyGdxGame implements ApplicationListener {
 					Gdx.input.isKeyPressed(Keys.W),
 					Gdx.input.isKeyPressed(Keys.S)
 			};
-
 			for (Entity entity : entityArray) {
 				if (entity != entityArray.get(0)) {
 					entity.wasd(keyList, move, currentPlayerSpeed);
 				}
 			}
+			boolean [] skillKeys = new boolean[]{false};
+			if(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) skillKeys[0] = true;
+
+			player.skills(skillKeys, System.currentTimeMillis());
 
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
