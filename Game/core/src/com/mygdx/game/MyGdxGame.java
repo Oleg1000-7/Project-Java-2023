@@ -40,7 +40,7 @@ public class MyGdxGame implements ApplicationListener {
 	boolean is_menu;
 	static public Player player;
 	float currentPlayerSpeed;
-	static int radius_a;
+	static int radius_a, keysNumber;
 	@Override
 	public void create() {
 		random = new Random();
@@ -49,6 +49,7 @@ public class MyGdxGame implements ApplicationListener {
 		move = new boolean[]{true, true, true, true};
 		is_menu = true;
 		radius_a = 650;
+		keysNumber = 0;
 
 
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());

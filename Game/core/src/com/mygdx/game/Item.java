@@ -10,5 +10,11 @@ public class Item extends Entity{
     @Override
     void update() {
         super.update();
+        if(this.intersects(MyGdxGame.player)) MyGdxGame.entityArray.removeIndex(MyGdxGame.entityArray.indexOf(this, false));
+        ifTaken();
+
+    }
+    void ifTaken(){
+        MyGdxGame.keysNumber++;
     }
 }
