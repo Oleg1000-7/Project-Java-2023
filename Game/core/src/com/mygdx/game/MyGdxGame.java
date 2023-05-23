@@ -34,12 +34,13 @@ public class MyGdxGame implements ApplicationListener {
 	SpriteBatch batch;
 	Random random;
 	OrthographicCamera camera;
-	Array<Entity> entityArray;
+	static Array<Entity> entityArray;
 	static ArrayList<Enemy> enemies;
 	boolean [] move;
 	boolean is_menu;
 	static public Player player;
 	float currentPlayerSpeed;
+	static int radius_a;
 	@Override
 	public void create() {
 		random = new Random();
@@ -47,6 +48,7 @@ public class MyGdxGame implements ApplicationListener {
 		enemies = new ArrayList<>();
 		move = new boolean[]{true, true, true, true};
 		is_menu = true;
+		radius_a = 650;
 
 
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
@@ -55,13 +57,13 @@ public class MyGdxGame implements ApplicationListener {
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("wall.jpg", "wall.jpg", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 500, entityArray);
+		player = new Player("player1.png", "player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 500, entityArray);
 
-		int y = 0;
+		int y = -7;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
-				if(walls[x]=='0') new Entity("wall.jpg", "point.jpg", x * 100, -y * 100, 0, entityArray);
+				if(walls[x]=='0') new Entity("wall.png", "point.jpg", x * 100, -y * 100, 0, entityArray);
 			}
 			y++;
 		}
@@ -118,14 +120,15 @@ public class MyGdxGame implements ApplicationListener {
 					entity.wasd(keyList, move, currentPlayerSpeed);
 				}
 			}
-			boolean [] skillKeys = new boolean[]{false};
+			boolean [] skillKeys = new boolean[]{false, false};
 			if(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT)) skillKeys[0] = true;
+			if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) skillKeys[1] = true;
 
 			player.skills(skillKeys, System.currentTimeMillis());
 
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
-			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && entityArray.size < 5){
+			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 5){
 				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 5, entityArray));
 			}
 		}

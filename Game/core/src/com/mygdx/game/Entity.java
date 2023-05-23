@@ -41,6 +41,11 @@ public class Entity extends Rectangle {
         this.centerY = this.getCenterY();
     }
     void wasd(boolean [] keys, boolean [] move, float speed){
+        if(!move[0]) this.x -= 1;
+        if(!move[1]) this.x += 1;
+        if(!move[2]) this.y += 1;
+        if(!move[3]) this.y -= 1;
+
         if (keys[0] && move[0]) this.x += speed;
         if (keys[1] && move[1]) this.x -= speed;
         if (keys[2] && move[2]) this.y -= speed;

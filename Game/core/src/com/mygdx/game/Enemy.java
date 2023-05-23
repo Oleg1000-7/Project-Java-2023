@@ -27,10 +27,11 @@ class Enemy extends Entity{
                 }
             }
         }
-        if(!this.intersects(MyGdxGame.player)) {
-            double cos = Math.abs(this.centerX-screenCenterX);
-            double sin = Math.abs(this.centerY-screenCenterY);
-            double gip =  Math.hypot(cos, sin);
+        double cos = Math.abs(this.centerX-screenCenterX);
+        double sin = Math.abs(this.centerY-screenCenterY);
+        double gip =  Math.hypot(cos, sin);
+
+        if(!this.intersects(MyGdxGame.player) && gip < MyGdxGame.radius_a && !MyGdxGame.player.is_invisible) {
             cos /= gip;
             sin /= gip;
 
