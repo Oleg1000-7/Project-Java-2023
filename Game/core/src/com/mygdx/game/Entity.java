@@ -12,7 +12,8 @@ public class Entity extends Rectangle {
     float x,y;
     double width,height,owidth,oheight,centerX,centerY;
     int speed;
-    public Entity(String image, String oimage, int x, int y, int speed, Array<Entity> entityArray) {
+    boolean collideable;
+    public Entity(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
         this.image = new Texture(Gdx.files.internal(image));
         this.oimage = new Texture(Gdx.files.internal(oimage));
         this.x = x;
@@ -23,9 +24,15 @@ public class Entity extends Rectangle {
         this.oheight = this.oimage.getHeight();
         this.speed = speed;
         entityArray.add(this);
-        this.setRect(this.x, this.y, this.width, this.height);
-        this.centerX = this.getCenterX();
-        this.centerY = this.getCenterY();
+        this.collideable = collideable;
+        if(collideable) {
+            this.setRect(this.x, this.y, this.width, this.height);
+            this.centerX = this.getCenterX();
+            this.centerY = this.getCenterY();
+        }else{
+            this.centerX = this.x + 50;
+            this.centerY = this.y + 50;
+        }
     }
 
     void draw(Batch batch, boolean is_drawn){
@@ -36,9 +43,15 @@ public class Entity extends Rectangle {
                 (float) (this.centerY - this.oheight/2));
     }
     void update(){
-        this.setRect(this.x, this.y, this.width, this.height);
-        this.centerX = this.getCenterX();
-        this.centerY = this.getCenterY();
+        if(collideable){
+            this.setRect(this.x, this.y, this.width, this.height);
+            this.centerX = this.getCenterX();
+            this.centerY = this.getCenterY();
+        }
+        else{
+            this.centerX = this.x + 50;
+            this.centerY = this.y + 50;
+        }
     }
     void wasd(boolean [] keys, boolean [] move, float speed){
         if(!move[0]) this.x -= 1;

@@ -6,10 +6,12 @@ import com.badlogic.gdx.utils.Array;
 class Player extends Entity{
     long cooldown1, cooldown2;
     boolean is_invisible;
-    public Player(String image, String oimage, int x, int y, int speed, Array<Entity> entityArray) {
-        super(image, oimage, x, y, speed, entityArray);
+
+    public Player(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
+        super(image, oimage, x, y, speed, entityArray, collideable);
         this.is_invisible = false;
     }
+
     int movement(Entity entity){
         if (this.intersects(entity)){
             double dx = Math.abs(entity.centerX - this.centerX);

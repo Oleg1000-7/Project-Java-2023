@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 
 class Enemy extends Entity{
-    public Enemy(String image, String oimage, int x, int y, int speed, Array<Entity> entityArray) {
-        super(image, oimage, x, y, speed, entityArray);
+
+
+    public Enemy(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
+        super(image, oimage, x, y, speed, entityArray, collideable);
     }
 
     @Override
