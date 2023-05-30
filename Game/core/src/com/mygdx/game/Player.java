@@ -7,7 +7,7 @@ class Player extends Entity{
     long cooldown1, cooldown2;
     boolean is_invisible;
 
-    public Player(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
+    public Player(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
         super(image, oimage, x, y, speed, entityArray, collideable);
         this.is_invisible = false;
     }
@@ -31,11 +31,11 @@ class Player extends Entity{
     void skills(boolean [] keys, long time){
         if (keys[0] && time - cooldown1 > 8000){
             this.cooldown1 = System.currentTimeMillis();
-            this.speed*=1.5;
+            this.speed*=2;
             MyGdxGame.radius_a = Gdx.graphics.getDisplayMode().width/2;
         }
         else if (time - cooldown1 > 8000 && cooldown1>0){
-            this.speed/=1.5;
+            this.speed/=2;
             this.cooldown1 = -1;
             MyGdxGame.radius_a = 650;
         }

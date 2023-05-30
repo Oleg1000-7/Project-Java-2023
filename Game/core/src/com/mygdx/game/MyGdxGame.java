@@ -48,7 +48,7 @@ public class MyGdxGame implements ApplicationListener {
 		enemies = new ArrayList<>();
 		move = new boolean[]{true, true, true, true};
 		is_menu = true;
-		radius_a = 650;
+		radius_a = 500;
 		keysNumber = 0;
 
 
@@ -58,7 +58,7 @@ public class MyGdxGame implements ApplicationListener {
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("player1.png", "player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 500, entityArray, true);
+		player = new Player("player1.png", "player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray, true);
 
 		int y = -7;
 		while(scanner.hasNext()){
@@ -66,8 +66,8 @@ public class MyGdxGame implements ApplicationListener {
 			for (int x =  0; x < walls.length; ++x){
 				int spawnX = x*100;
 				int spawnY = -y*100;
-				if(walls[x]=='0') new Entity("wall.png", "point.jpg", spawnX, spawnY, 0, entityArray, true);
-				if(walls[x]=='o') new Entity("seregapirat.jpg", "enemy.png", spawnX, spawnY, 0, entityArray, false);
+				if(walls[x]=='#') new Entity("wall.png", "point.jpg", spawnX, spawnY, 0, entityArray, true);
+				if(walls[x]=='.') new Entity("seregapirat.jpg", "enemy.png", spawnX, spawnY, 0, entityArray, false);
 				if(walls[x]=='k'){
 					new Entity("seregapirat.jpg", "enemy.png", spawnX, spawnY, 0, entityArray, false);
 					new Item("digits.png","point.jpg", spawnX, spawnY, 0, entityArray, true);
@@ -140,8 +140,8 @@ public class MyGdxGame implements ApplicationListener {
 
 			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
-			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 5 && 0==1){
-				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 5, entityArray, true));
+			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 1){
+				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 4, entityArray, true));
 			}
 		}
 	}

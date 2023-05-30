@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 public class Item extends Entity{
 
 
-    public Item(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
+    public Item(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
         super(image, oimage, x, y, speed, entityArray, collideable);
     }
 
