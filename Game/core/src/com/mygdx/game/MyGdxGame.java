@@ -58,9 +58,9 @@ public class MyGdxGame implements ApplicationListener {
 		camera.setToOrtho(false, Gdx.graphics.getDisplayMode().width, Gdx.graphics.getDisplayMode().height);
 		batch = new SpriteBatch();
 
-		player = new Player("player1.png", "player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray, true);
+		player = new Player("player1.png", "player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray, true, 100);
 
-		int y = -7;
+		int y = -30;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
@@ -138,10 +138,10 @@ public class MyGdxGame implements ApplicationListener {
 
 			player.skills(skillKeys, System.currentTimeMillis());
 
-			int x = random.nextInt(0, Gdx.graphics.getDisplayMode().width + 400) - 200;
-			int y = random.nextInt(0, Gdx.graphics.getDisplayMode().height + 400) - 200;
+			int x = random.nextInt(Gdx.graphics.getDisplayMode().width + 400) - 200;
+			int y = random.nextInt(Gdx.graphics.getDisplayMode().height + 400) - 200;
 			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 1){
-				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 4, entityArray, true));
+				enemies.add(new Enemy("assets/enemy.jpg", "assets/enemy_.jpg", x, y, 4, entityArray, true, 10));
 			}
 		}
 	}

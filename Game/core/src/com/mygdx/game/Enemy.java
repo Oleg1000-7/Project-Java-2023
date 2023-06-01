@@ -5,9 +5,10 @@ import com.badlogic.gdx.utils.Array;
 
 class Enemy extends Entity{
 
-
-    public Enemy(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
+    int damage;
+    public Enemy(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int damage) {
         super(image, oimage, x, y, speed, entityArray, collideable);
+        this.damage = damage;
     }
 
     @Override
@@ -42,6 +43,9 @@ class Enemy extends Entity{
 
             if (this.y < screenCenterY && directions[2]) this.y += this.speed*sin;
             else if (this.y > screenCenterY && directions[3]) this.y -= this.speed*sin;
+        }
+        if(this.intersects(MyGdxGame.player)){
+            MyGdxGame.player.healthPoints -= this.damage;
         }
         super.update();
     }

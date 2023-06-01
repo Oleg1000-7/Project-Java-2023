@@ -6,10 +6,12 @@ import com.badlogic.gdx.utils.Array;
 class Player extends Entity{
     long cooldown1, cooldown2;
     boolean is_invisible;
+    int healthPoints;
 
-    public Player(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
+    public Player(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int healthPoints) {
         super(image, oimage, x, y, speed, entityArray, collideable);
         this.is_invisible = false;
+        this.healthPoints = healthPoints;
     }
 
     int movement(Entity entity){
