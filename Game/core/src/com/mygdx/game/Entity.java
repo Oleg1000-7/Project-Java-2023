@@ -13,9 +13,9 @@ public class Entity extends Rectangle {
     double width,height,owidth,oheight,centerX,centerY;
     float speed;
     boolean collideable;
-    public Entity(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
+    public Entity(String image, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
         this.image = new Texture(Gdx.files.internal(image));
-        this.oimage = new Texture(Gdx.files.internal(oimage));
+        this.oimage = new Texture(Gdx.files.internal("smoke.png"));
         this.x = x;
         this.y = y;
         this.width = this.image.getWidth();

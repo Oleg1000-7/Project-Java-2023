@@ -6,8 +6,8 @@ import com.badlogic.gdx.utils.Array;
 class Enemy extends Entity{
 
     int damage;
-    public Enemy(String image, String oimage, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int damage) {
-        super(image, oimage, x, y, speed, entityArray, collideable);
+    public Enemy(String image, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int damage) {
+        super(image, x, y, speed, entityArray, collideable);
         this.damage = damage;
     }
 

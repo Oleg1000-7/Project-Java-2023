@@ -8,8 +8,8 @@ public class Door extends Entity{
     Texture image2;
     boolean isOpened;
 
-    public Door(String image, String oimage, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
-        super(image, oimage, x, y, speed, entityArray, collideable);
+    public Door(String image, float x, float y, int speed, Array<Entity> entityArray, boolean collideable) {
+        super(image, x, y, speed, entityArray, collideable);
         this.isOpened = false;
     }
 
@@ -23,7 +23,7 @@ public class Door extends Entity{
             this.image = this.image2;
             MyGdxGame.entityArray.removeIndex(MyGdxGame.entityArray.indexOf(this, false));
             this.setRect(0,0,0,0);
-            new Door("bucket.jpg", "point.jpg", this.x, this.y, 0, MyGdxGame.entityArray, false);
+            new Door("opened_door.png", this.x, this.y-30, 0, MyGdxGame.entityArray, false);
 
         }
     }
