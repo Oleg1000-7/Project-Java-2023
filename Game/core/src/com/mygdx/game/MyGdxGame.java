@@ -35,10 +35,11 @@ public class MyGdxGame implements ApplicationListener {
 	static Array<Entity> entityArray;
 	static ArrayList<Enemy> enemies;
 	boolean [] move;
-	boolean is_menu;
+	boolean is_menu, is_enemy, is_move;
 	static public Player player;
 	float currentPlayerSpeed;
 	static int radius_a, keysNumber;
+
 	@Override
 	public void create() {
 		random = new Random();
@@ -69,7 +70,7 @@ public class MyGdxGame implements ApplicationListener {
 				if(walls[x]=='k'){
 					new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
 					new Item("key.png", spawnX, spawnY, 0, entityArray, true);
-					}
+				}
 				if(walls[x]=='d'){
 					new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
 					new Door("door.png", spawnX, spawnY, 0, entityArray, true);
@@ -101,7 +102,14 @@ public class MyGdxGame implements ApplicationListener {
 			move = new boolean[]{true, true, true, true};
 
 			for (Entity entity : entityArray) {
-				if(entity != entityArray.get(0)){
+				is_enemy = true;
+				for (Enemy x: enemies){
+					if (entity == x && !(Math.pow(entity.x - player.x, 2) + Math.pow(entity.y - player.y, 2) < 280 * 280)){
+						is_enemy = false;
+						break;
+					}
+				}
+				if(entity != entityArray.get(0) && is_enemy){
 					entity.draw(batch, Math.pow(entity.x - player.x, 2) + Math.pow(entity.y - player.y, 2) < 280 * 280);
 					entity.update();
 
@@ -123,6 +131,7 @@ public class MyGdxGame implements ApplicationListener {
 			for (Entity entity : entityArray) {
 				if (entity != entityArray.get(0)) {
 					entity.wasd(keyList, move, currentPlayerSpeed);
+
 				}
 			}
 			boolean [] skillKeys = new boolean[]{false, false};
@@ -134,7 +143,7 @@ public class MyGdxGame implements ApplicationListener {
 			int x = random.nextInt(Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(Gdx.graphics.getDisplayMode().height + 400) - 200;
 			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 1){
-				enemies.add(new Enemy("enemy.jpg", x, y, 4, entityArray, true, 10));
+				enemies.add(new Enemy("enemy.png", x, y, 4, entityArray, true, 10));
 			}
 		}
 	}

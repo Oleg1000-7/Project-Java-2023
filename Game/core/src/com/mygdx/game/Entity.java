@@ -15,7 +15,16 @@ public class Entity extends Rectangle {
     boolean collideable;
     public Entity(String image, float x, float y, float speed, Array<Entity> entityArray, boolean collideable) {
         this.image = new Texture(Gdx.files.internal(image));
-        this.oimage = new Texture(Gdx.files.internal("smoke.png"));
+        int randint = (int) (Math.random() * 3);
+        if (randint == 1){
+            this.oimage = new Texture(Gdx.files.internal("smoke_1.png"));
+        }
+        else if (randint == 2){
+            this.oimage = new Texture(Gdx.files.internal("smoke_2.png"));
+        }
+        else{
+            this.oimage = new Texture(Gdx.files.internal("smoke_3.png"));
+        }
         this.x = x;
         this.y = y;
         this.width = this.image.getWidth();
