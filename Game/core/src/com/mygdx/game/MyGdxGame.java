@@ -35,10 +35,10 @@ public class MyGdxGame implements ApplicationListener {
 	static Array<Entity> entityArray;
 	static ArrayList<Enemy> enemies;
 	boolean [] move;
-	boolean is_menu, is_enemy, is_move;
+	boolean is_menu, is_enemy;
 	static public Player player;
 	float currentPlayerSpeed;
-	static int radius_a, keysNumber;
+	static int radius_a, keysNumber, move_time, animation_time;
 
 	@Override
 	public void create() {
@@ -49,6 +49,7 @@ public class MyGdxGame implements ApplicationListener {
 		is_menu = true;
 		radius_a = 500;
 		keysNumber = 0;
+		animation_time = 16;
 
 
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
@@ -59,7 +60,7 @@ public class MyGdxGame implements ApplicationListener {
 
 		player = new Player("player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray, true, 100);
 
-		int y = -35;
+		int y = -39;
 		while(scanner.hasNext()){
 			char[] walls = scanner.nextLine().toCharArray();
 			for (int x =  0; x < walls.length; ++x){
@@ -114,11 +115,29 @@ public class MyGdxGame implements ApplicationListener {
 					entity.update();
 
 					int pos = player.movement(entity);
+
 					if (pos != -1) move[pos] = false;
 				}
 			}
-			player.draw(batch, true);
-			player.update();
+			if (player.cooldown1 < 8000) animation_time = 16;
+			else animation_time = 8;
+			if (
+					Gdx.input.isKeyPressed(Keys.A) ||
+							Gdx.input.isKeyPressed(Keys.D) ||
+							Gdx.input.isKeyPressed(Keys.W) ||
+							Gdx.input.isKeyPressed(Keys.S)){
+				if (move_time == animation_time * 2) move_time = 0;
+				if (move_time > animation_time){
+					player.image = new Texture(Gdx.files.internal("player1.png"));
+				} else{
+					player.image = new Texture(Gdx.files.internal("player2.png"));
+				}
+				move_time++;
+			}
+			if(!player.is_invisible){
+				player.draw(batch, true);
+				player.update();
+			}
 
 			batch.end();
 
@@ -131,7 +150,6 @@ public class MyGdxGame implements ApplicationListener {
 			for (Entity entity : entityArray) {
 				if (entity != entityArray.get(0)) {
 					entity.wasd(keyList, move, currentPlayerSpeed);
-
 				}
 			}
 			boolean [] skillKeys = new boolean[]{false, false};
@@ -142,8 +160,8 @@ public class MyGdxGame implements ApplicationListener {
 
 			int x = random.nextInt(Gdx.graphics.getDisplayMode().width + 400) - 200;
 			int y = random.nextInt(Gdx.graphics.getDisplayMode().height + 400) - 200;
-			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 1){
-				enemies.add(new Enemy("enemy.png", x, y, 4, entityArray, true, 10));
+			if ((x <= -100 || y <= -100 || x >= Gdx.graphics.getDisplayMode().width || y >= Gdx.graphics.getDisplayMode().height) && enemies.size() < 5){
+				enemies.add(new Enemy("angry_enemy.png", x, y, 4, entityArray, true, 10));
 			}
 		}
 	}
