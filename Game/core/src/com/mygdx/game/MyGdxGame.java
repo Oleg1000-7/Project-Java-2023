@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,23 +12,64 @@ import java.util.Scanner;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
+import javax.naming.Context;
+
 public class MyGdxGame implements ApplicationListener {
-	Path path = Paths.get("assets/map.txt");
+
+	//File file = new File("C:/Users/user/IdeaProjects/test/assets/walls.txt");
 
 	Scanner scanner;
 
 	{
-		try {
-			scanner = new Scanner(path);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+			scanner = new Scanner(
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"######........k...............................................d.....\n"+
+					"##################.#################################################\n"+
+					"######.............#..........###.............................######\n"+
+					"######.#####################..#...............................######\n"+
+					"######..........................#.............................######\n"+
+					"#################################.............................######\n"+
+					"#################################.............................######\n"+
+					"######....................d...................................######\n"+
+					"######..##..##..##...#....##############.############.######.#######\n"+
+					"######..##..##..##........#..##..........###..............##..######\n"+
+					"##############..############.#..#...##...###..####..####..###.######\n"+
+					"##############..###########....###..##...###..####..####..##..######\n"+
+					"##############..##################..##...###..####..####..##.#######\n"+
+					"######...........................#..##....................##..######\n"+
+					"######d#######..################.#.##########################.######\n"+
+					"######.#######..#................#............................######\n"+
+					"######.#######..#..############..#..##..##..##..##..##..##..########\n"+
+					"######.#..#.....#................##################.################\n"+
+					"######.#........#..............................####k################\n"+
+					"######.#######################################.#####################\n"+
+					"######.....................########...........................######\n"+
+					"######.........###.........##################.##..##..##..##..######\n"+
+					"######.........###.........#.......##########.##..##..##..##..######\n"+
+					"######.....................#.......##########.................######\n"+
+					"############d############..#####..###########.##..##..##..##..######\n"+
+					"######..k.....#...................####.k....#.##..##..##..##..######\n"+
+					"#####.........##################..####..##..#.................######\n"+
+					"#####.........#...................####..##..#####.##################\n"+
+					"######........#........k..........####........................######\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################\n"+
+					"####################################################################");
 	}
 
 	SpriteBatch batch;
@@ -39,7 +82,6 @@ public class MyGdxGame implements ApplicationListener {
 	static public Player player;
 	float currentPlayerSpeed;
 	static int radius_a, keysNumber, move_time, animation_time;
-	static Button start_button, exit_button, pause_button;
 
 	@Override
 	public void create() {
@@ -61,23 +103,19 @@ public class MyGdxGame implements ApplicationListener {
 
 		player = new Player("player1.png", Gdx.graphics.getDisplayMode().width/2, Gdx.graphics.getDisplayMode().height/2, 250, entityArray, true, 100);
 
-		start_button = new Button("start.png", "start.png", Gdx.graphics.getDisplayMode().width/2 - Gdx.graphics.getDisplayMode().width/10, Gdx.graphics.getDisplayMode().height - Gdx.graphics.getDisplayMode().height/5);
-		exit_button = new Button("exit.png", "exit.png", Gdx.graphics.getDisplayMode().width/2 + Gdx.graphics.getDisplayMode().width/10, Gdx.graphics.getDisplayMode().height - Gdx.graphics.getDisplayMode().height/5);
-		pause_button = new Button("pause.png", "pause.png", Gdx.graphics.getDisplayMode().width - Gdx.graphics.getDisplayMode().width/20, Gdx.graphics.getDisplayMode().height - Gdx.graphics.getDisplayMode().height/5);
-
-		int y = -39;
+		int y = -36;
 		while(scanner.hasNext()){
-			char[] map = scanner.nextLine().toCharArray();
-			for (int x =  0; x < map.length; ++x){
+			char[] walls = scanner.nextLine().toCharArray();
+			for (int x = 0; x < walls.length; x++){
 				int spawnX = x*100;
 				int spawnY = -y*100;
-				if(map[x]=='#') new Entity("wall.png", spawnX, spawnY, 0, entityArray, true);
-				if(map[x]=='.') new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
-				if(map[x]=='k'){
+				if(walls[x]=='#') new Entity("wall.png", spawnX, spawnY, 0, entityArray, true);
+				if(walls[x]=='.') new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
+				if(walls[x]=='k'){
 					new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
 					new Item("key.png", spawnX, spawnY, 0, entityArray, true);
 				}
-				if(map[x]=='d'){
+				if(walls[x]=='d'){
 					new Entity("floor.png", spawnX, spawnY, 0, entityArray, false);
 					new Door("door.png", spawnX, spawnY, 0, entityArray, true);
 				}
@@ -90,22 +128,13 @@ public class MyGdxGame implements ApplicationListener {
 	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		if (is_menu) {
-			if (Gdx.input.isTouched()) {
-				if (Gdx.input.getX() > exit_button.x && Gdx.input.getX() < exit_button.x + exit_button.width && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() > exit_button.y && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() < exit_button.y + exit_button.height) Gdx.app.exit();
-				if (Gdx.input.getX() > start_button.x && Gdx.input.getX() < start_button.x + start_button.width && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() > start_button.y && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() < start_button.y + start_button.height) is_menu = false;
-			}
+			if (Gdx.input.isKeyPressed(Keys.Q)) Gdx.app.exit();
+			if (Gdx.input.isKeyPressed(Keys.ENTER)) is_menu = false;
 			Gdx.gl.glClearColor(0, 0, 0, 0);
 			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-			Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 0);
-			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-			batch.setProjectionMatrix(camera.combined);
-			batch.begin();
-			start_button.draw(batch, false);
-			exit_button.draw(batch, false);
 			camera.update();
-			batch.end();
 		} else {
-			if (Gdx.input.isTouched() && Gdx.input.getX() > pause_button.x && Gdx.input.getX() < pause_button.x + pause_button.width && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() > pause_button.y && Gdx.graphics.getDisplayMode().height - Gdx.input.getY() < pause_button.y + pause_button.height) is_menu = true;
+			if (Gdx.input.isKeyPressed(Keys.ESCAPE)) is_menu = true;
 			Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 0);
 			Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 			camera.update();
@@ -133,14 +162,14 @@ public class MyGdxGame implements ApplicationListener {
 					if (pos != -1) move[pos] = false;
 				}
 			}
-			if (player.cooldown1 < 8000) animation_time = 16;
+			if (!player.is_running) animation_time = 16;
 			else animation_time = 8;
 			if (
 					Gdx.input.isKeyPressed(Keys.A) ||
 							Gdx.input.isKeyPressed(Keys.D) ||
 							Gdx.input.isKeyPressed(Keys.W) ||
 							Gdx.input.isKeyPressed(Keys.S)){
-				if (move_time >= animation_time * 2) move_time = 0;
+				if (move_time == animation_time * 2) move_time = 0;
 				if (move_time > animation_time){
 					player.image = new Texture(Gdx.files.internal("player1.png"));
 				} else{
@@ -152,7 +181,6 @@ public class MyGdxGame implements ApplicationListener {
 				player.draw(batch, true);
 				player.update();
 			}
-			pause_button.draw(batch, false);
 
 			batch.end();
 

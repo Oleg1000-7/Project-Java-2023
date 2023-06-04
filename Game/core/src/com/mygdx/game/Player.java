@@ -5,12 +5,13 @@ import com.badlogic.gdx.utils.Array;
 
 class Player extends Entity{
     long cooldown1, cooldown2;
-    boolean is_invisible;
+    boolean is_invisible, is_running;
     int healthPoints;
 
     public Player(String image, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int healthPoints) {
         super(image, x, y, speed, entityArray, collideable);
         this.is_invisible = false;
+        this.is_running = false;
         this.healthPoints = healthPoints;
     }
 
@@ -31,15 +32,17 @@ class Player extends Entity{
         }else return -1;
     }
     void skills(boolean [] keys, long time){
-        if (keys[0] && time - cooldown1 > 8000){
-            this.cooldown1 = System.currentTimeMillis();
+        if (keys[0] && time - cooldown1 > 2000 && !is_running){
+            this.cooldown1 = time;
             this.speed*=2;
             MyGdxGame.radius_a = Gdx.graphics.getDisplayMode().width/2;
+            this.is_running = true;
         }
-        else if (time - cooldown1 > 8000 && cooldown1>0){
+        else if (time - cooldown1 > 2000 && is_running){
             this.speed/=2;
-            this.cooldown1 = -1;
+            this.cooldown1 = time;
             MyGdxGame.radius_a = 650;
+            this.is_running = false;
         }
 
         if (keys[1] && time - cooldown2 > 8000){
