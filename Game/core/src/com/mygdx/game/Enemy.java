@@ -6,9 +6,12 @@ import com.badlogic.gdx.utils.Array;
 class Enemy extends Entity{
 
     int damage;
+    long attackCooldown;
+
     public Enemy(String image, float x, float y, float speed, Array<Entity> entityArray, boolean collideable, int damage) {
         super(image, x, y, speed, entityArray, collideable);
         this.damage = damage;
+        this.attackCooldown = 0;
     }
 
     @Override
@@ -33,7 +36,6 @@ class Enemy extends Entity{
         double cos = Math.abs(this.centerX-screenCenterX);
         double sin = Math.abs(this.centerY-screenCenterY);
         double gip =  Math.hypot(cos, sin);
-
         if(!this.intersects(MyGdxGame.player) && gip < MyGdxGame.radius_a && !MyGdxGame.player.is_invisible) {
             cos /= gip;
             sin /= gip;
@@ -45,8 +47,16 @@ class Enemy extends Entity{
             else if (this.y > screenCenterY && directions[3]) this.y -= this.speed*sin;
         }
         if(this.intersects(MyGdxGame.player)){
-            MyGdxGame.player.healthPoints -= this.damage;
+            if(MyGdxGame.curTime - this.attackCooldown > 1000) {
+                MyGdxGame.player.healthPoints -= this.damage;
+                this.attackCooldown = MyGdxGame.curTime;
+            }
         }
         super.update();
+        if(gip > 2000){
+            MyGdxGame.enemies.remove(this);
+            MyGdxGame.entityArray.removeIndex(MyGdxGame.entityArray.indexOf(this, false));
+            this.setRect(99999, 99999, 0, 0);
+        }
     }
 }

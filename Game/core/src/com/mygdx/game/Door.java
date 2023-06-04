@@ -24,7 +24,7 @@ public class Door extends Entity{
             MyGdxGame.entityArray.removeIndex(MyGdxGame.entityArray.indexOf(this, false));
             this.setRect(0,0,0,0);
             new Door("opened_door.png", this.x, this.y-30, 0, MyGdxGame.entityArray, false);
-
+            MyGdxGame.doorsNumber++;
         }
     }
 }
